@@ -1,68 +1,39 @@
 package com.example.achmerova
 
-import java.sql.*
-import java.util.*
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.StandardCharsets.UTF_8
+import kotlin.concurrent.thread
 
-class MySQLConnection {
-    companion object {
-        private var conn : Connection? = null
-    }
 
-    fun startConnection() : Connection? {
-        val connectionProps = Properties()
-        //var conn: Connection? = null
+class HTTPConnection {
 
-        connectionProps.put("username", "arapovao_lrkfy")
-        connectionProps.put("password", "GWMYkXYF6X")
+    fun createPOST(query : String) {
+        val url : URL = URL("http://vho_arapovao_117967.vh.parking.ru/?window=employee")
+        thread {
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver").newInstance()
+            val postData : ByteArray = query.toByteArray(UTF_8)
+            val sizeOfData = postData.size.toString()
 
-            /* MySQLConnection.conn = DriverManager.getConnection(
-                "jdbc:" + "mysql" + "://" +
-                        "SSQL-12R2WEB02.client.parking.ru" +
-                        "/" + "", "arapovao_lrkfy", "GWMYkXYF6X")
+            with(url.openConnection() as HttpURLConnection) {
+                requestMethod = "POST"
+                doOutput = true
+                setRequestProperty("charset", "utf-8")
+                setRequestProperty("Content-lenght", postData.size.toString())
 
-             */
+                outputStream.buffered().use {
+                    it.write(postData)
+                    it.flush()
+                }
 
-            val driver = DriverManager.getConnection(
-                "jdbc:" + "mysql" + "://" +
-                        "SSQL-12R2WEB02.client.parking.ru" +
-                        "/" + "", "arapovao_lrkfy", "GWMYkXYF6X")
-
-            println("CONNNNNNNNNNNNNNECTION DOOOOOOOOOOOOOOOOOOOOOOONE")
-
-        } catch (ex: SQLException) {
-            ex.printStackTrace()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-
-        return MySQLConnection.conn
-
-    }
-
-    fun executeQuery(q: String) : ResultSet? {
-        var stmnt : Statement? = null
-        var resultset: ResultSet? = null
-        val query: String = q
-
-        try {
-            stmnt = MySQLConnection.conn?.createStatement()
-            resultset = stmnt?.executeQuery(query)
-            print("RESULT SETTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
-            print(stmnt?.resultSet)
-/*
-
-            if (stmnt?.execute(query)) {
-                resultset = stmnt?.resultSet
+                inputStream.bufferedReader().use {
+                    it.lines().forEach { line ->
+                        println(line)
+                    }
+                }
             }
-
- */
-        } catch (ex: SQLException) {
-            ex.printStackTrace()
         }
 
-        return resultset
     }
+
 }

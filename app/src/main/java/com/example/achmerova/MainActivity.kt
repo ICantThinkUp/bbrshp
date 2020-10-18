@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import java.sql.ResultSet
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,23 +15,30 @@ class MainActivity : AppCompatActivity() {
         val servicesNavButton = findViewById<Button>(R.id.servicesNavButton)
         val historyNavButton = findViewById<Button>(R.id.historyNavButton)
 
+
         employeeNavButton.setOnClickListener {
-            pushEmployeeNavButton()
+            var resultOfGet : String
+
+
+//            val con = HTTPConnection().createPOST("BUDDY YOU COOL!!!!!!")
+//
+//            val intent : Intent = Intent(this, employeeActivity::class.java).apply {
+//                putExtra("DATASET_EMPLOYEE", resultOfGet)
+//            }
+//            startActivity(intent)
+
+
+
+            pushEmployeeNavButton(employeeActivity::class.java)
+
+            // обратиться к бд в инициализации активити
         }
     }
 
-    private fun pushEmployeeNavButton() {
-        var datalist: Array<String>
+    private fun pushEmployeeNavButton(activity: Class<*>) {
 
-        val conn = MySQLConnection()
-        conn.startConnection()
-        val result : ResultSet? = conn.executeQuery("SELECT * FROM employee")
-        print("MySQLConnection.conn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11")
-        print(result)
-        //datalist
 
-        val intent = Intent(this, employeeActivity::class.java)
-        intent.putExtra("DATALIST", 1)
+        val intent = Intent(this, activity)
 
         startActivity(intent)
     }

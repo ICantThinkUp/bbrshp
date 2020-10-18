@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Achmerova</string>
+    <string name="app_name">BARBERSHOP</string>
+    <string name="info_button_on">Подробнее</string>
+    <string name="info_button_off">Скрыть информацию</string>
 </resources>
