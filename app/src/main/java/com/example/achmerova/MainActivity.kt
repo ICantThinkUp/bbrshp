@@ -15,32 +15,27 @@ class MainActivity : AppCompatActivity() {
         val servicesNavButton = findViewById<Button>(R.id.servicesNavButton)
         val historyNavButton = findViewById<Button>(R.id.historyNavButton)
 
+        val navButtons : Map<Button, Class<*>> = mapOf(
+                employeeNavButton to employeeActivity::class.java,
+                customersNavButton to CustomerActivity::class.java,
+                servicesNavButton to ServiceActivity::class.java,
+                historyNavButton to HistoryActivity::class.java
+        )
 
-        employeeNavButton.setOnClickListener {
-            var resultOfGet : String
+        for ((button, activity) in navButtons) {
+            bindListener(button, activity)
+        }
 
+    }
 
-//            val con = HTTPConnection().createPOST("BUDDY YOU COOL!!!!!!")
-//
-//            val intent : Intent = Intent(this, employeeActivity::class.java).apply {
-//                putExtra("DATASET_EMPLOYEE", resultOfGet)
-//            }
-//            startActivity(intent)
-
-
-
-            pushEmployeeNavButton(employeeActivity::class.java)
-
-            // обратиться к бд в инициализации активити
+    private fun bindListener(button: Button, activity: Class<*>) {
+        button.setOnClickListener {
+            click(activity)
         }
     }
 
-    private fun pushEmployeeNavButton(activity: Class<*>) {
-
-
+    private fun click(activity: Class<*>) {
         val intent = Intent(this, activity)
-
         startActivity(intent)
     }
-
 }

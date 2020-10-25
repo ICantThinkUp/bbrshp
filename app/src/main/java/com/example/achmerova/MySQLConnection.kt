@@ -1,25 +1,51 @@
 package com.example.achmerova
 
-import java.net.HttpURLConnection
 import java.net.URL
-import java.nio.charset.StandardCharsets.UTF_8
-import kotlin.concurrent.thread
 
+class DatabaseAdapter(private val windowName : String) : DatabaseInterface {
 
-class HTTPConnection {
+    override fun create() {
+        TODO("Not yet implemented")
+    }
 
-    fun createPOST(query : String) {
-        val url : URL = URL("http://vho_arapovao_117967.vh.parking.ru/?window=employee")
+    override fun read() {
+        val server : URL = createURL("R", windowName)
+        // не знаю как назвать переменную с урлом
+    }
+
+    override fun update() {
+        TODO("Not yet implemented")
+    }
+
+    override fun delete() {
+        TODO("Not yet implemented")
+    }
+
+}
+
+fun createURL(shortDatabaseMethod : String, windowName : String) : URL {
+    return URL("http://vho_arapovao_117967.vh.parking.ru/" +
+            "?api=$shortDatabaseMethod&window=$windowName")
+}
+
+fun
+
+/*
+class DatabaseAdapter(serverAPI: String, parametersForSQLQuery: String = "") {
+    val server : URL = URL("http://vho_arapovao_117967.vh.parking.ru/"
+            + serverAPI)
+    val postData : ByteArray = parametersForSQLQuery.toByteArray(UTF_8)
+    val sizeOfData = postData.size.toString()
+
+    init {
         thread {
 
-            val postData : ByteArray = query.toByteArray(UTF_8)
-            val sizeOfData = postData.size.toString()
 
-            with(url.openConnection() as HttpURLConnection) {
+            with(fullwindowName.openConnection() as HttpURLConnection) {
                 requestMethod = "POST"
                 doOutput = true
                 setRequestProperty("charset", "utf-8")
-                setRequestProperty("Content-lenght", postData.size.toString())
+                setRequestProperty("Content-lenght", sizeOfData)
 
                 outputStream.buffered().use {
                     it.write(postData)
@@ -33,7 +59,7 @@ class HTTPConnection {
                 }
             }
         }
-
     }
 
 }
+ */
