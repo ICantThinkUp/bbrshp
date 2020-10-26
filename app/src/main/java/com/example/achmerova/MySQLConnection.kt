@@ -1,6 +1,8 @@
 package com.example.achmerova
 
+import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.concurrent.thread
 
 class DatabaseAdapter(private val windowName : String) : DatabaseInterface {
 
@@ -8,9 +10,9 @@ class DatabaseAdapter(private val windowName : String) : DatabaseInterface {
         TODO("Not yet implemented")
     }
 
-    override fun read() {
-        val server : URL = createURL("R", windowName)
-        // не знаю как назвать переменную с урлом
+    override fun read() : Any {
+        val databaseServer : URL = createURL("R", windowName)
+        return getData(databaseServer)
     }
 
     override fun update() {
@@ -28,7 +30,35 @@ fun createURL(shortDatabaseMethod : String, windowName : String) : URL {
             "?api=$shortDatabaseMethod&window=$windowName")
 }
 
-fun
+fun getData(server : URL) : Any {
+    thread {
+        val serverConnection : HttpURLConnection =
+                server.openConnection() as HttpURLConnection
+        val rawData = receiveData(serverConnection)
+        return@thread prepareData(rawData)
+        // pattern bridge
+    }
+}
+
+fun receiveData(connection: HttpURLConnection) : ArrayList<String> {
+    var rawData : ArrayList<String> = ArrayList()
+
+    with(connection) {
+        requestMethod = "GET"
+        inputStream.bufferedReader().use {
+            it.lines().forEach { line ->
+                rawData.add(line)
+                println(line)
+            }
+        }
+    }
+
+    return rawData
+}
+
+fun prepareData(rawData : ArrayList<String>) : Any {
+    return item_customer("1", "1", "1", "1")
+}
 
 /*
 class DatabaseAdapter(serverAPI: String, parametersForSQLQuery: String = "") {
