@@ -11,8 +11,8 @@ class DatabaseAdapter(private val windowName : String) : DatabaseInterface {
     }
 
     override fun read() : Any {
-        val databaseServer : URL = createURL("R", windowName)
-        return getData(databaseServer)
+        val sourceOfRecords : URL = createURL("R", windowName)
+        return getRecords(sourceOfRecords)
     }
 
     override fun update() {
@@ -23,47 +23,57 @@ class DatabaseAdapter(private val windowName : String) : DatabaseInterface {
         TODO("Not yet implemented")
     }
 
-}
-
-fun createURL(shortDatabaseMethod : String, windowName : String) : URL {
-    return URL("http://vho_arapovao_117967.vh.parking.ru/" +
-            "?api=$shortDatabaseMethod&window=$windowName")
-}
-
-fun getData(server : URL) : Any {
-    thread {
-        val serverConnection : HttpURLConnection =
-                server.openConnection() as HttpURLConnection
-        val rawData = receiveData(serverConnection)
-        return@thread prepareData(rawData)
-        // pattern bridge
+    private fun createURL(shortDatabaseMethod : String, windowName : String) : URL {
+        return URL("http://vho_arapovao_117967.vh.parking.ru/" +
+                "?api=$shortDatabaseMethod&window=$windowName")
     }
-}
 
-fun receiveData(connection: HttpURLConnection) : ArrayList<String> {
-    var rawData : ArrayList<String> = ArrayList()
+    private fun getRecords(source: URL) {
+        thread {
+            val connectionToRecordsSource : HttpURLConnection =
+                    source.openConnection() as HttpURLConnection
 
-    with(connection) {
-        requestMethod = "GET"
-        inputStream.bufferedReader().use {
-            it.lines().forEach { line ->
-                rawData.add(line)
-                println(line)
-            }
+            val rawRecords = getRawRecords(connectionToRecordsSource)
+            val preparedData = getPreparedRecords(rawRecords)
+
+            
+            // pattern bridge
         }
     }
 
-    return rawData
-}
+    private fun getRawRecords(connectionToRecordsSource: HttpURLConnection) : ArrayList<String> {
+        var rawRecords : ArrayList<String> = ArrayList()
 
-fun prepareData(rawData : ArrayList<String>) : Any {
-    return item_customer("1", "1", "1", "1")
+        with(connectionToRecordsSource) {
+            requestMethod = "GET"
+            inputStream.bufferedReader().use {
+                it.lines().forEach { line ->
+                    rawRecords.add(line)
+                }
+            }
+        }
+
+        return rawRecords
+    }
+
+    private fun getPreparedRecords(rawRecords : ArrayList<String>) : ArrayList<Any> {
+        var preparedData : ArrayList<Any> = ArrayList()
+
+        for (i in rawRecords) {
+            println("PREPARED ITEM")
+            println(i)
+        }
+
+        return preparedData;
+    }
 }
 
 /*
-class DatabaseAdapter(serverAPI: String, parametersForSQLQuery: String = "") {
-    val server : URL = URL("http://vho_arapovao_117967.vh.parking.ru/"
-            + serverAPI)
+class DatabaseAdapter(sourceAPI: String, parametersForSQLQuery: String = "") {
+    val source
+    : URL = URL("http://vho_arapovao_117967.vh.parking.ru/"
+            + source
+           API)
     val postData : ByteArray = parametersForSQLQuery.toByteArray(UTF_8)
     val sizeOfData = postData.size.toString()
 
